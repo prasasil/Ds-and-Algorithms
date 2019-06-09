@@ -1,0 +1,105 @@
+package com.company;
+
+import java.util.LinkedList;
+import java.util.Stack;
+/**
+*Reverse graph
+*calculate topological sort of reverse graph
+*calculate DFS for the graph in reverse order(we got from topological sort)
+**/
+public class KosarajuStringlyConnectedComp {
+
+    Stack<Integer> stack = new Stack<>();
+    Graph graph = new Graph(10);
+    int[] scc = new int[graph.vertices.length];
+
+   public void topologicalSortofReverseGraph() {
+
+       boolean[] visited = new boolean[10];
+       LinkedList<Integer>[] revAdjList = graph.reverse();
+       for (int v : graph.vertices)
+       {
+           if(!visited[v]) {
+               visited[v]=true;
+               DFS(v, revAdjList, visited);
+               stack.push(v);
+           }
+       }
+    }
+
+    private void DFS(int v, LinkedList<Integer>[] revAdjList, boolean[] visited) {
+       for(int e:revAdjList[v])
+       {
+           if(!visited[e])
+           {
+               visited[e] = true;
+               DFS(e,revAdjList,visited);
+               stack.push(e);
+           }
+       }
+    }
+
+    private void DFSStronglyConnected()
+    {
+
+        boolean[] visited = new boolean[graph.vertices.length];
+        int count = 0;
+        for(int v:stack)
+        {
+            if(!visited[v]) {
+                visited[v] = true;
+                scc[v]=count;
+                DFS(v, graph.adjList, visited, count);
+                count++;
+            }
+        }
+
+
+    }
+
+    private void DFS(int v, LinkedList<Integer>[] adjList, boolean[] visited, int count) {
+       for(int e : adjList[v])
+       {
+           if(!visited[e])
+           {
+               visited[e] =true;
+               scc[e]=count;
+               DFS(e,adjList,visited,count);
+           }
+       }
+    }
+
+    public boolean isSCC(int a,int b)
+    {
+        return scc[a]==scc[b];
+    }
+
+    static class Graph{
+
+    int vertices[];
+    LinkedList<Integer> adjList[];
+    public LinkedList<Integer>[] reverse()
+    {
+        LinkedList<Integer> []linkedList = new LinkedList[vertices.length];
+        for(int v : vertices)
+        {
+            for(int e:adjList[v])
+            {
+                linkedList[e].add(v);
+            }
+        }
+
+        return linkedList;
+
+    }
+
+
+
+
+    Graph(int v)
+    {
+        vertices = new int[v];
+        adjList = new LinkedList[v];
+    }
+}
+}
